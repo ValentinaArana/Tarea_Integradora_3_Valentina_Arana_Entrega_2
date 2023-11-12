@@ -1,0 +1,21 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Pilar {
+    private Proyecto[] proyectos;
+    public String nombre;
+    public String descripcion;
+    public List<Proyecto> proyectosAsociados;
+
+    public Pilar(String nombre, String descripcion) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.proyectosAsociados = new ArrayList<>();
+    }
+
+    public Proyecto[] getProyectos() {
+        return this.proyectos;
+    }
+}

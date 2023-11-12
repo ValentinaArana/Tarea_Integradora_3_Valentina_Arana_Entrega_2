@@ -1,0 +1,116 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Proyecto {
+    private String nombrePilar;
+    private String nombreProyecto;
+    private String idProyecto;
+    private String idPilar;
+    private String descripcion;
+    private String fechaInicio;
+    private String fechaFin;
+    private String estado;
+    private List<Evidencia> evidencias;
+
+    public Proyecto(String idProyecto, String nombreProyecto, String descripcion, String fechaInicio, String fechaFin, String estado, String nombrePilar) {
+        this.idProyecto = idProyecto;
+        this.nombrePilar = nombrePilar;
+        this.nombreProyecto = nombreProyecto;
+        this.descripcion = descripcion;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.estado = estado;
+        this.evidencias = new ArrayList<>();
+    }
+
+    // Getters y Setters
+    public void setNombre(String nuevoNombreProyecto) {
+        this.nombreProyecto = nuevoNombreProyecto;
+    }
+
+    public String getNombre() {
+        return this.nombreProyecto;
+    }
+
+    public String getIdPilar() {
+        return idPilar;
+    }
+
+    public String getNombreProyecto() {
+        return nombreProyecto;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public String getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public String getFechaFin() {
+        return fechaFin;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public List<Evidencia> getEvidencias() {
+        return evidencias;
+    }
+
+    public void setIdPilar(String idPilar) {
+        this.idPilar = idPilar;
+    }
+
+    public void setNombreProyecto(String nombreProyecto) {
+        this.nombreProyecto = nombreProyecto;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public void setFechaInicio(String fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public void setFechaFin(String fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public void setEvidencias(List<Evidencia> evidencias) {
+        this.evidencias = evidencias;
+    }
+
+    // Métodos adicionales
+
+    public void agregarEvidencia(Evidencia evidencia) {
+        evidencias.add(evidencia);
+    }
+
+    public String getInfo() {
+        return "Información del proyecto: " + this.nombreProyecto + " - Descripción: " + this.descripcion;
+    }
+
+    // Métodos para gestionar proyectos
+
+    public void modificarProyecto(String nuevoNombre, String nuevaDescripcion, String nuevaFechaInicio, String nuevaFechaFin, String nuevoEstado) {
+        this.setNombreProyecto(nuevoNombre);
+        this.setDescripcion(nuevaDescripcion);
+        this.setFechaInicio(nuevaFechaInicio);
+        this.setFechaFin(nuevaFechaFin);
+        this.setEstado(nuevoEstado);
+    }
+
+    public String getNombrePilar() {
+        return nombrePilar;
+    }
+}

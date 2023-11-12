@@ -1,0 +1,437 @@
+package ui;
+
+import java.util.Scanner;
+import model.Controller;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Controller controller = new Controller();
+
+        while (true) {
+            System.out.println("Por favor, selecciona una opción:");
+            System.out.println("1. Registrar Usuario");
+            System.out.println("2. Gestionar Proyectos");
+            System.out.println("3. Gestionar Evidencias");
+            System.out.println("4. Gestionar Puntos de Interés");
+            System.out.println("5. Generar Objetos de Prueba");
+            System.out.println("6. Consultar Información de un Pilar y sus Proyectos Asociados");
+            System.out.println("7. Consultar Información de un Proyecto y sus Evidencias");
+            System.out.println("8. Salir");
+
+            int opcion = scanner.nextInt();
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("Ingrese el tipo de usuario (1. Investigador, 2. Recolector, 3. Visitante):");
+                    int tipoUsuario = scanner.nextInt();
+                    scanner.nextLine();
+
+                    System.out.println("Ingrese el nombre de usuario:");
+                    String nombreUsuario = scanner.nextLine();
+
+                    System.out.println("Ingrese la contraseña:");
+                    String contrasena = scanner.nextLine();
+
+                    if (tipoUsuario == 1) {
+                        System.out.println("Ingrese el nombre del Investigador:");
+                        String nombreInvestigador = scanner.nextLine();
+
+                        System.out.println("Ingrese el correo del Investigador:");
+                        String correoInvestigador = scanner.nextLine();
+
+                        System.out.println("Ingrese el teléfono del Investigador:");
+                        String telefonoInvestigador = scanner.nextLine();
+
+                        System.out.println("Ingrese el área del Investigador:");
+                        String areaInvestigador = scanner.nextLine();
+
+                        System.out.println("Ingrese el cargo del Investigador:");
+                        String cargoInvestigador = scanner.nextLine();
+
+                        if (controller.registrarInvestigador(nombreUsuario, contrasena, nombreInvestigador, correoInvestigador, telefonoInvestigador, areaInvestigador, cargoInvestigador)) {
+                            System.out.println("Investigador registrado con éxito.");
+                        } else {
+                            System.out.println("Hubo un error al registrar el investigador. Por favor, inténtelo de nuevo.");
+                        }
+                    } else if (tipoUsuario == 2) {
+                        System.out.println("Ingrese el nombre del Recolector:");
+                        String nombreRecolector = scanner.nextLine();
+
+                        System.out.println("Ingrese el correo del Recolector:");
+                        String correoRecolector = scanner.nextLine();
+
+                        System.out.println("Ingrese el teléfono del Recolector:");
+                        String telefonoRecolector = scanner.nextLine();
+
+                        if (controller.registrarRecolector(nombreUsuario, contrasena, nombreRecolector, correoRecolector, telefonoRecolector)) {
+                            System.out.println("Recolector registrado con éxito.");
+                        } else {
+                            System.out.println("Hubo un error al registrar el recolector. Por favor, inténtelo de nuevo.");
+                        }
+                    } else if (tipoUsuario == 3) {
+                        if (controller.registrarVisitante(nombreUsuario, contrasena)) {
+                            System.out.println("Visitante registrado con éxito.");
+                        } else {
+                            System.out.println("Hubo un error al registrar el visitante. Por favor, inténtelo de nuevo.");
+                        }
+                    } else {
+                        System.out.println("Tipo de usuario no válido.");
+                    }
+                    break;
+                case 2:
+                    System.out.println("Ingrese el tipo de operación (1. Registrar, 2. Modificar, 3. Borrar):");
+                    int tipoOperacionProyecto = scanner.nextInt();
+                    scanner.nextLine();
+
+                    if (tipoOperacionProyecto == 1) {
+                        System.out.println("Ingrese el nombre del proyecto:");
+                        String nombreProyecto = scanner.nextLine();
+
+                        System.out.println("Ingrese el identificador del proyecto:");
+                        String idProyecto = scanner.nextLine();
+
+                        System.out.println("Ingrese una descripción del proyecto:");
+                        String descripcionProyecto = scanner.nextLine();
+
+                        System.out.println("Ingrese la fecha de inicio del proyecto (yyyy-mm-dd):");
+                        String fechaInicioProyecto = scanner.nextLine();
+
+                        System.out.println("Ingrese la fecha de fin del proyecto (yyyy-mm-dd):");
+                        String fechaFinProyecto = scanner.nextLine();
+
+                        System.out.println("Ingrese el nombre del pilar asociado al proyecto (1. Biodiversidad, 2. Gestión del recurso hídrico, 3. Gestión integral de residuos sólidos, 4. Energía):");
+                        String nombrePilarProyecto;
+                        int opcionPilar = scanner.nextInt();
+                        scanner.nextLine();
+
+                        switch (opcionPilar) {
+                            case 1:
+                                nombrePilarProyecto = "Biodiversidad";
+                                break;
+                            case 2:
+                                nombrePilarProyecto = "Gestión del recurso hídrico";
+                                break;
+                            case 3:
+                                nombrePilarProyecto = "Gestión integral de residuos sólidos";
+                                break;
+                            case 4:
+                                nombrePilarProyecto = "Energía";
+                                break;
+                            default:
+                                System.out.println("Opción no válida. No se asignará un pilar al proyecto.");
+                                return;
+                        }
+
+                        boolean registroExitoso = controller.registrarProyecto(idProyecto, nombreProyecto, descripcionProyecto, fechaInicioProyecto, fechaFinProyecto, "Activo", nombrePilarProyecto);
+
+                        if (registroExitoso) {
+                            System.out.println("El proyecto se registró con éxito.");
+                        } else {
+                            System.out.println("Hubo un error al registrar el proyecto. Por favor, inténtelo de nuevo.");
+                        }
+                    } else if (tipoOperacionProyecto == 2) {
+                        System.out.println("Ingrese el nombre del proyecto a modificar:");
+                        String nombreProyectoModificar = scanner.nextLine();
+                        System.out.println("¿Qué campo desea modificar? (1. Nombre, 2. Descripción, 3. Fecha de Inicio, 4. Fecha de Fin):");
+                        int campoAModificar = scanner.nextInt();
+                        scanner.nextLine();
+
+                        switch (campoAModificar) {
+                            case 1:
+                                System.out.println("Ingrese el nuevo nombre del proyecto:");
+                                String nuevoNombreProyecto = scanner.nextLine();
+                                boolean nombreModificado = controller.modificarNombreProyecto(nombreProyectoModificar, nuevoNombreProyecto);
+                                if (nombreModificado) {
+                                    System.out.println("El nombre del proyecto se modificó con éxito.");
+                                } else {
+                                    System.out.println("Hubo un error al modificar el nombre del proyecto. Por favor, inténtelo de nuevo.");
+                                }
+                                break;
+                            case 2:
+                                System.out.println("Ingrese la nueva descripción del proyecto:");
+                                String nuevaDescripcionProyecto = scanner.nextLine();
+                                boolean descripcionModificada = controller.modificarDescripcionProyecto(nombreProyectoModificar, nuevaDescripcionProyecto);
+                                if (descripcionModificada) {
+                                    System.out.println("La descripción del proyecto se modificó con éxito.");
+                                } else {
+                                    System.out.println("Hubo un error al modificar la descripción del proyecto. Por favor, inténtelo de nuevo.");
+                                }
+                                break;
+                            case 3:
+                                System.out.println("Ingrese la nueva fecha de inicio del proyecto (yyyy-mm-dd):");
+                                String nuevaFechaInicioProyecto = scanner.nextLine();
+                                boolean fechaInicioModificada = controller.modificarFechaInicioProyecto(nombreProyectoModificar, nuevaFechaInicioProyecto);
+                                if (fechaInicioModificada) {
+                                    System.out.println("La fecha de inicio del proyecto se modificó con éxito.");
+                                } else {
+                                    System.out.println("Hubo un error al modificar la fecha de inicio del proyecto. Por favor, inténtelo de nuevo.");
+                                }
+                                break;
+                            case 4:
+                                System.out.println("Ingrese la nueva fecha de fin del proyecto (yyyy-mm-dd):");
+                                String nuevaFechaFinProyecto = scanner.nextLine();
+                                boolean fechaFinModificada = controller.modificarFechaFinProyecto(nombreProyectoModificar, nuevaFechaFinProyecto);
+                                if (fechaFinModificada) {
+                                    System.out.println("La fecha de fin del proyecto se modificó con éxito.");
+                                } else {
+                                    System.out.println("Hubo un error al modificar la fecha de fin del proyecto. Por favor, inténtelo de nuevo.");
+                                }
+                                break;
+                            default:
+                                System.out.println("Operación no válida para proyectos.");
+                                break;
+                        }
+                    } else if (tipoOperacionProyecto == 3) {
+                        System.out.println("Ingrese el nombre del proyecto a borrar:");
+                        String nombreProyectoBorrar = scanner.nextLine();
+
+                        boolean borradoExitoso = controller.borrarProyecto(nombreProyectoBorrar);
+                        if (borradoExitoso) {
+                            System.out.println("El proyecto se borró con éxito.");
+                        } else {
+                            System.out.println("Hubo un error al borrar el proyecto. Por favor, inténtelo de nuevo.");
+                        }
+                    } else {
+                        System.out.println("Operación no válida para proyectos.");
+                    }
+                    break;
+                case 3:
+                    System.out.println("Ingrese el tipo de operación (1. Registrar, 2. Modificar, 3. Borrar):");
+                    int opcionEvidencia = scanner.nextInt();
+                    scanner.nextLine();
+
+                    switch (opcionEvidencia) {
+                        case 1:
+                            System.out.println("Ingrese el tipo de evidencia (1. Reseña, 2. Archivo):");
+                            int tipoEvidencia = scanner.nextInt();
+                            scanner.nextLine();
+
+                            switch (tipoEvidencia) {
+                                case 1:
+                                    System.out.println("Ingrese la descripción de la reseña:");
+                                    String descripcionResena = scanner.nextLine();
+                                    boolean resenaRegistrada = controller.registrarResena(descripcionResena);
+                                    if (resenaRegistrada) {
+                                        System.out.println("La reseña se registró con éxito.");
+                                    } else {
+                                        System.out.println("Hubo un error al registrar la reseña. Por favor, inténtelo de nuevo.");
+                                    }
+                                    break;
+                                case 2:
+                                    System.out.println("Ingrese el nombre descriptivo de la evidencia:");
+                                    String nombreDescriptivo = scanner.nextLine();
+
+                                    System.out.println("Ingrese la descripción detallada de la evidencia:");
+                                    String descripcionDetallada = scanner.nextLine();
+
+                                    System.out.println("Ingrese el proyecto al cual se asocia la evidencia:");
+                                    String proyectoAsociado = scanner.nextLine();
+
+                                    System.out.println("Ingrese la fecha de registro (yyyy-mm-dd):");
+                                    String fechaRegistro = scanner.nextLine();
+
+                                    boolean evidenciaRegistrada = controller.registrarEvidencia(nombreDescriptivo, descripcionDetallada, proyectoAsociado, fechaRegistro);
+                                    if (evidenciaRegistrada) {
+                                        System.out.println("La evidencia se registró con éxito.");
+                                    } else {
+                                        System.out.println("Hubo un error al registrar la evidencia. Por favor, inténtelo de nuevo.");
+                                    }
+                                    break;
+                                default:
+                                    System.out.println("Opción no válida para tipo de evidencia.");
+                                    break;
+                            }
+                            break;
+                        case 2:
+                            System.out.println("Ingrese el nombre descriptivo de la evidencia que desea modificar:");
+                            String nombreEvidenciaModificar = scanner.nextLine();
+
+                            System.out.println("¿Qué desea modificar? (1. Nombre descriptivo, 2. Descripción detallada, 3. Proyecto asociado):");
+                            int opcionModificar = scanner.nextInt();
+                            scanner.nextLine();
+
+                            switch (opcionModificar) {
+                                case 1:
+                                    System.out.println("Ingrese el nuevo nombre descriptivo:");
+                                    String nuevoNombreDescriptivo = scanner.nextLine();
+                                    boolean evidenciaModificada = controller.modificarEvidencia(nombreEvidenciaModificar, nuevoNombreDescriptivo);
+                                    if (evidenciaModificada) {
+                                        System.out.println("La evidencia se modificó con éxito.");
+                                    } else {
+                                        System.out.println("Hubo un error al modificar la evidencia. Por favor, inténtelo de nuevo.");
+                                    }
+                                    break;
+                                case 2:
+                                    System.out.println("Ingrese la nueva descripción detallada de la evidencia:");
+                                    String nuevaDescripcionDetallada = scanner.nextLine();
+                                    boolean descripcionModificada = controller.modificarDescripcionEvidencia(nombreEvidenciaModificar, nuevaDescripcionDetallada);
+                                    if (descripcionModificada) {
+                                        System.out.println("La descripción detallada de la evidencia se modificó con éxito.");
+                                    } else {
+                                        System.out.println("Hubo un error al modificar la descripción detallada de la evidencia. Por favor, inténtelo de nuevo.");
+                                    }
+                                    break;
+                                case 3:
+                                    System.out.println("Ingrese el nuevo proyecto asociado:");
+                                    String nuevoProyectoAsociado = scanner.nextLine();
+                                    boolean proyectoModificado = controller.modificarProyectoEvidencia(nombreEvidenciaModificar, nuevoProyectoAsociado);
+                                    if (proyectoModificado) {
+                                        System.out.println("El proyecto asociado a la evidencia se modificó con éxito.");
+                                    } else {
+                                        System.out.println("Hubo un error al modificar el proyecto asociado. Por favor, inténtelo de nuevo.");
+                                    }
+                                    break;
+                                default:
+                                    System.out.println("Opción no válida para modificar evidencia.");
+                                    break;
+                            }
+                            break;
+                        case 3:
+                            System.out.println("Ingrese el nombre descriptivo de la evidencia que desea eliminar:");
+                            String nombreEvidenciaEliminar = scanner.nextLine();
+
+                            boolean evidenciaEliminada = controller.eliminarEvidencia(nombreEvidenciaEliminar);
+                            if (evidenciaEliminada) {
+                                System.out.println("La evidencia se eliminó con éxito.");
+                            } else {
+                                System.out.println("Hubo un error al eliminar la evidencia. Por favor, inténtelo de nuevo.");
+                            }
+                            break;
+                        default:
+                            System.out.println("Opción no válida para gestionar evidencia.");
+                            break;
+                    }
+                    break;
+                case 4:
+                    System.out.println("Ingrese el tipo de operación (1. Registrar, 2. Modificar, 3. Borrar):");
+                    int tipoOperacionPuntoInteres = scanner.nextInt();
+                    scanner.nextLine();
+
+                    if (tipoOperacionPuntoInteres == 1) {
+                        System.out.println("Ingrese el nombre del punto de interés:");
+                        String nombrePunto = scanner.nextLine();
+
+                        System.out.println("Ingrese la coordenada X del punto de interés:");
+                        double coordenadaX = scanner.nextDouble();
+                        scanner.nextLine();
+
+                        System.out.println("Ingrese la coordenada Y del punto de interés:");
+                        double coordenadaY = scanner.nextDouble();
+                        scanner.nextLine();
+
+                        System.out.println("Ingrese una descripción sobre el punto de interés:");
+                        String descripcion = scanner.nextLine();
+
+                        String codigoQR = controller.generarCodigoUnico();
+                        controller.gestionarPuntosDeInteres(nombrePunto, descripcion, codigoQR, coordenadaX, coordenadaY);
+
+                        System.out.println("¿Este punto de interés pertenece a alguna evidencia? (Sí/No):");
+                        String respuesta = scanner.nextLine().trim().toLowerCase();
+
+                        if (respuesta.equals("sí") || respuesta.equals("si")) {
+                            System.out.println("Ingrese el nombre descriptivo de la evidencia a la que pertenece este punto de interés:");
+                            String nombreEvidencia = scanner.nextLine().trim();
+                            controller.asociarPuntoDeInteresAEvidencia(codigoQR, nombreEvidencia);
+                            System.out.println("El punto de interés se registró y asoció con éxito a la evidencia.");
+                        } else {
+                            System.out.println("Código QR generado: " + codigoQR);
+                            System.out.println("El punto de interés se registró con éxito.");
+                        }
+                    } else if (tipoOperacionPuntoInteres == 2) {
+                        System.out.println("Ingrese el nombre del punto de interés que desea modificar:");
+                        String nombrePuntoDeInteresModificar = scanner.nextLine();
+
+                        System.out.println("¿Qué desea modificar?");
+                        System.out.println("1. Nombre");
+                        System.out.println("2. Descripción");
+                        System.out.println("3. Coordenadas");
+
+                        int opcionModificar = scanner.nextInt();
+                        scanner.nextLine();
+
+                        String nuevoNombre = "";
+                        String nuevaDescripcion = "";
+                        double nuevaCoordenadaX = Double.NaN;
+                        double nuevaCoordenadaY = Double.NaN;
+
+                        switch (opcionModificar) {
+                            case 1:
+                                System.out.println("Ingrese el nuevo nombre del punto de interés:");
+                                nuevoNombre = scanner.nextLine();
+                                break;
+                            case 2:
+                                System.out.println("Ingrese la nueva descripción del punto de interés:");
+                                nuevaDescripcion = scanner.nextLine();
+                                break;
+                            case 3:
+                                System.out.println("¿Desea modificar la coordenada X? (Sí/No)");
+                                String respuestaCoordenadaX = scanner.nextLine();
+                                nuevaCoordenadaX = respuestaCoordenadaX.equalsIgnoreCase("Sí") ? scanner.nextDouble() : Double.NaN;
+                                scanner.nextLine();
+
+                                System.out.println("¿Desea modificar la coordenada Y? (Sí/No)");
+                                String respuestaCoordenadaY = scanner.nextLine();
+                                nuevaCoordenadaY = respuestaCoordenadaY.equalsIgnoreCase("Sí") ? scanner.nextDouble() : Double.NaN;
+                                scanner.nextLine();
+                                break;
+                            default:
+                                System.out.println("Opción no válida. No se realizaron modificaciones.");
+                                return;
+                        }
+
+                        controller.modificarPuntoDeInteres(nombrePuntoDeInteresModificar, nuevoNombre, nuevaDescripcion, nuevaCoordenadaX, nuevaCoordenadaY);
+                    } else if (tipoOperacionPuntoInteres == 3) {
+                        System.out.println("Ingrese el nombre del punto de interés a borrar:");
+                        String nombrePuntoBorrar = scanner.nextLine();
+
+                        boolean puntoBorrado = controller.borrarPuntoDeInteresPorNombre(nombrePuntoBorrar);
+                        if (puntoBorrado) {
+                            System.out.println("El punto de interés se borró con éxito.");
+                        } else {
+                            System.out.println("Hubo un error al borrar el punto de interés. Por favor, inténtelo de nuevo.");
+                        }
+                    } else {
+                        System.out.println("Operación no válida para puntos de interés.");
+                    }
+                    break;
+                case 5:
+                    controller.generarObjetosDePrueba();
+                    break;
+                case 6:
+                    System.out.println("Ingrese el número del pilar (1. Biodiversidad, 2. Gestión del recurso hídrico, 3. Gestión integral de residuos sólidos, 4. Energía):");
+                    int numeroPilarUsuario = scanner.nextInt();
+                    scanner.nextLine();
+
+                    String nombrePilarUsuario = controller.obtenerNombrePilarPorNumero(numeroPilarUsuario);
+
+                    if (!nombrePilarUsuario.isEmpty()) {
+                        String informacionPilarYProyectos = controller.obtenerInformacionPilarYProyectos(nombrePilarUsuario);
+
+                        System.out.println(java.util.Objects.requireNonNullElse(informacionPilarYProyectos, "El pilar no fue encontrado o no tiene proyectos asociados."));
+                    } else {
+                        System.out.println("Número de pilar no válido. Inténtelo de nuevo.");
+                    }
+                    break;
+                case 7:
+                    System.out.println("Ingrese el nombre del proyecto:");
+                    scanner.nextLine();
+                    String nombreProyectoConsulta = scanner.nextLine().trim();
+
+                    if (!nombreProyectoConsulta.isEmpty()) {
+                        String informacionDetallada = controller.consultarInformacionDetalladaProyecto(nombreProyectoConsulta);
+                        System.out.println(informacionDetallada);
+                    } else {
+                        System.out.println("Nombre de proyecto no válido. Inténtelo de nuevo.");
+                    }
+                    break;
+                case 8:
+                    System.out.println("Saliendo del sistema...");
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Opción no válida. Por favor, intenta de nuevo.");
+            }
+        }
+    }
+}

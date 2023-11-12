@@ -1,0 +1,7 @@
+package model;
+
+public class Recolector extends Usuario{
+    public Recolector(String nombreUsuario, String contrasena, String nombreRecolector, String correoRecolector, String telefonoRecolector) {
+        super(nombreUsuario, contrasena);
+    }
+}

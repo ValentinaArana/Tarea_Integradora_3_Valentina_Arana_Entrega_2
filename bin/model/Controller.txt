@@ -1,0 +1,456 @@
+package model;
+
+import java.util.UUID;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Date;
+import java.util.Iterator;
+import java.text.SimpleDateFormat;
+import java.util.stream.Collectors;
+
+public class Controller {
+    private List<PuntoDeInteres> puntosDeInteres;
+    private List<Evidencia> evidencias;
+    private List<Usuario> listaUsuarios;
+    private List<Resena> listaDeEvidencias;
+    private List<PuntoDeInteres> listaPuntosDeInteres;
+    private List<Proyecto> listaProyectos;
+    private List<Evidencia> listaEvidencias;
+    private List<Usuario> usuariosVisitantes;
+    private Map<Integer, Proyecto> proyectos;
+    private String nombreProyecto;
+    private Map<String, Pilar> pilares;
+    private Scanner scanner = new Scanner(System.in);
+    private String tipo;
+
+    public Controller() {
+
+        listaUsuarios = new ArrayList<>();
+        listaDeEvidencias = new ArrayList<>();
+        listaPuntosDeInteres = new ArrayList<>();
+        listaProyectos = new ArrayList<>();
+        listaEvidencias = new ArrayList<>();
+        usuariosVisitantes = new ArrayList<>();
+        proyectos = new HashMap<>();
+        puntosDeInteres = new ArrayList<>();
+        pilares = new HashMap<>();
+    }
+    public boolean registrarInvestigador(String nombreUsuario, String contrasena, String nombreInvestigador, String correoInvestigador, String telefonoInvestigador, String areaInvestigador, String cargoInvestigador) {
+        Investigador investigador = new Investigador(nombreUsuario, contrasena, nombreInvestigador, correoInvestigador, telefonoInvestigador, areaInvestigador, cargoInvestigador);
+        return listaUsuarios.add(investigador);
+    }
+
+    public boolean registrarRecolector(String nombreUsuario, String contrasena, String nombreRecolector, String correoRecolector, String telefonoRecolector) {
+        Recolector recolector = new Recolector(nombreUsuario, contrasena, nombreRecolector, correoRecolector, telefonoRecolector);
+        return listaUsuarios.add(recolector);
+    }
+
+    public boolean registrarVisitante(String nombreUsuario, String contrasena) {
+        Usuario usuario = new Usuario(nombreUsuario, contrasena);
+        return usuariosVisitantes.add(usuario);
+    }
+
+    public boolean modificarNombreProyecto(String nombreProyectoModificar, String nuevoNombreProyecto) {
+        Proyecto proyecto = buscarProyectoPorNombre(nombreProyectoModificar);
+        if (proyecto != null) {
+            proyecto.setNombre(nuevoNombreProyecto);
+            return true;
+        } else {
+            System.out.println("El proyecto con el nombre " + nombreProyectoModificar + " no fue encontrado.");
+            return false;
+        }
+    }
+
+    public boolean modificarDescripcionProyecto(String nombreProyectoModificar, String nuevaDescripcionProyecto) {
+        Proyecto proyecto = buscarProyectoPorNombre(nombreProyectoModificar);
+        if (proyecto != null) {
+            proyecto.setDescripcion(nuevaDescripcionProyecto);
+            return true;
+        } else {
+            System.out.println("El proyecto con el nombre " + nombreProyectoModificar + " no fue encontrado.");
+            return false;
+        }
+    }
+
+    public boolean modificarFechaInicioProyecto(String nombreProyectoModificar, String nuevaFechaInicioProyecto) {
+        Proyecto proyecto = buscarProyectoPorNombre(nombreProyectoModificar);
+        if (proyecto != null) {
+            proyecto.setFechaInicio(nuevaFechaInicioProyecto);
+            return true; 
+        } else {
+            System.out.println("El proyecto con el nombre " + nombreProyectoModificar + " no fue encontrado.");
+            return false;
+        }
+    }
+
+    public boolean modificarFechaFinProyecto(String nombreProyectoModificar, String nuevaFechaFinProyecto) {
+        Proyecto proyecto = buscarProyectoPorNombre(nombreProyectoModificar);
+        if (proyecto != null) {
+            proyecto.setFechaFin(nuevaFechaFinProyecto);
+            return true;
+        } else {
+            System.out.println("El proyecto con el nombre " + nombreProyectoModificar + " no fue encontrado.");
+            return false;
+        }
+    }
+
+    public String consultarInformacionDetalladaProyecto(String nombreProyecto) {
+        Proyecto proyectoConsultado = this.obtenerProyectoPorNombre(nombreProyecto);
+
+        if (proyectoConsultado != null) {
+            int cantidadEvidenciasResena = this.contarEvidenciasPorTipo(nombreProyecto, "Reseña");
+            int cantidadEvidenciasOtrosTipos = this.contarEvidenciasOtrosTipos(nombreProyecto);
+
+            return "Cantidad de Evidencias de Tipo Reseña: " + cantidadEvidenciasResena +
+                    "\nCantidad de Evidencias de Otros Tipos: " + cantidadEvidenciasOtrosTipos;
+        } else {
+            return "El proyecto no fue encontrado.";
+        }
+    }
+
+    public void generarObjetosDePrueba() {
+        Usuario usuarioPrueba = new Usuario("nombreDeUsuario", "contrasena123");
+        this.registrarUsuario(usuarioPrueba);
+
+        Date fechaInicio = new Date();
+        Date fechaFin = new Date(System.currentTimeMillis() + 100000);
+        String pilar = "Sostenibilidad";
+
+        this.registrarProyecto("ID123", "Proyecto de Prueba", "Descripción de prueba", fechaInicio.toString(), fechaFin.toString(), "Activo", pilar);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaActual = dateFormat.format(new Date());
+
+        Evidencia evidenciaPrueba = new Evidencia("Tipo de Evidencia", "https://ruta/a/archivo.ext", "ID del proyecto asociado", fechaActual, "TipoEspecifico");
+        this.registrarEvidencia(evidenciaPrueba);
+
+        // Utiliza el nuevo constructor
+        PuntoDeInteres puntoPrueba = new PuntoDeInteres("Nombre del Punto de Interés", "Descripción del punto", "CódigoQR123", 10.5, 20.3);
+        this.registrarPuntoDeInteres(puntoPrueba);
+
+        System.out.println("Se han generado objetos de prueba en el sistema.");
+    }
+
+
+    public boolean registrarProyecto(String idProyecto, String nombreProyecto, String descripcion, String fechaInicio, String fechaFin, String estado, String pilar) {
+        try {
+            Proyecto nuevoProyecto = new Proyecto(idProyecto, nombreProyecto, descripcion, fechaInicio, fechaFin, estado, pilar);
+            listaProyectos.add(nuevoProyecto);
+            proyectos.put(listaProyectos.size(), nuevoProyecto);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Hubo un error al registrar el proyecto. Por favor, inténtelo de nuevo.");
+            return false;
+        }
+    }
+    public String obtenerInformacionPilarYProyectos(String nombrePilar) {
+        List<Proyecto> proyectosAsociados = listaProyectos.stream()
+                .filter(proyecto -> nombrePilar.equals(proyecto.getNombrePilar()))
+                .collect(Collectors.toList());
+
+        StringBuilder informacion = new StringBuilder();
+        informacion.append("Información del pilar ").append(nombrePilar).append(":\n");
+
+        if (!proyectosAsociados.isEmpty()) {
+            informacion.append("Proyectos asociados:\n");
+            proyectosAsociados.forEach(proyecto -> {
+                informacion.append("- ").append(proyecto.getNombreProyecto()).append(" (Asociado al pilar ").append(proyecto.getNombrePilar()).append(")\n");
+            });
+        } else {
+            informacion.append("No se encontraron proyectos asociados al pilar ").append(nombrePilar).append(".");
+        }
+
+        return informacion.toString();
+    }
+
+    public String obtenerNombrePilarPorNumero(int numeroPilar) {
+        switch (numeroPilar) {
+            case 1:
+                return "Biodiversidad";
+            case 2:
+                return "Gestión del recurso hídrico";
+            case 3:
+                return "Gestión integral de residuos sólidos";
+            case 4:
+                return "Energía";
+            default:
+                return "";
+        }
+    }
+
+    private void registrarPuntoDeInteres(PuntoDeInteres puntoPrueba) {
+        listaPuntosDeInteres.add(puntoPrueba);
+        System.out.println("Se registró un nuevo punto de interés " );
+    }
+
+    public void registrarUsuario(Usuario usuarioPrueba) {
+        listaUsuarios.add(usuarioPrueba);
+        System.out.println("Se registró un nuevo usuario ");
+    }
+
+    private void registrarEvidencia(Evidencia evidenciaPrueba) {
+        try {
+            if (!listaEvidencias.contains(evidenciaPrueba)) {
+                listaEvidencias.add(evidenciaPrueba);
+                System.out.println("Se registró una nueva evidencia ");
+            } else {
+                System.out.println("La evidencia ya existe en el sistema.");
+            }
+        } catch (Exception e) {
+            System.out.println("Hubo un error al registrar la evidencia. Por favor, inténtelo de nuevo.");
+        }
+    }
+
+    private boolean agregarEvidencia(Resena nuevaResena) {
+        if (this.listaDeEvidencias == null) {
+            this.listaDeEvidencias = new ArrayList<>();
+        }
+        return this.listaDeEvidencias.add(nuevaResena);
+    }
+
+    private Evidencia buscarEvidenciaPorNombre(String nombreEvidencia) {
+        List<Evidencia> listaEvidencias = obtenerListaDeEvidencias();
+
+        for (Evidencia evidencia : listaEvidencias) {
+            if (evidencia.getNombreDescriptivo().equals(nombreEvidencia)) {
+                return evidencia;
+            }
+        }
+        return null;
+    }
+
+    public void gestionarPuntosDeInteres(String nombrePunto, String descripcion, String codigoQR, double coordenadaX, double coordenadaY) {
+        PuntoDeInteres punto = new PuntoDeInteres(nombrePunto, descripcion, codigoQR, coordenadaX, coordenadaY);
+        puntosDeInteres.add(punto);
+    }
+
+    public boolean borrarPuntoDeInteresPorNombre(String nombrePuntoBorrar) {
+        String nombrePuntoSinEspacios = nombrePuntoBorrar.trim().toLowerCase();
+
+        Iterator<PuntoDeInteres> iterator = puntosDeInteres.iterator();
+        while (iterator.hasNext()) {
+            PuntoDeInteres punto = iterator.next();
+            if (punto.getNombre().trim().toLowerCase().equals(nombrePuntoSinEspacios)) {
+                iterator.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Proyecto obtenerProyectoPorNombre(String nombreProyecto) {
+        for (Proyecto proyecto : listaProyectos) {
+            if (proyecto.getNombre().equals(nombreProyecto)) {
+                return proyecto;
+            }
+        }
+        return null;
+    }
+
+    private int contarEvidenciasOtrosTipos(String nombreProyecto) {
+        int contador = 0;
+        for (Evidencia evidencia : listaEvidencias) {
+            if (!evidencia.getTipo().equals("TipoEspecifico")) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+
+    private int contarEvidenciasPorTipo(String nombreProyecto, String tipoEvidencia) {
+        int contador = 0;
+        for (Evidencia evidencia : listaEvidencias) {
+            if (evidencia.getTipo().equals(tipoEvidencia)) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+
+    public boolean modificarPuntoDeInteres(String nombrePuntoDeInteresModificar, String nuevoNombre, String nuevaDescripcion, double nuevaCoordenadaX, double nuevaCoordenadaY) {
+        for (PuntoDeInteres punto : listaPuntosDeInteres) {
+            if (punto.getNombre().equals(nombrePuntoDeInteresModificar)) {
+
+                System.out.println("¿Qué desea modificar?");
+                System.out.println("1. Nombre");
+                System.out.println("2. Descripción");
+                System.out.println("3. Coordenada X");
+                System.out.println("4. Coordenada Y");
+
+                int opcion = scanner.nextInt();
+                scanner.nextLine();
+
+                switch (opcion) {
+                    case 1:
+                        System.out.println("Ingrese el nuevo nombre:");
+                        punto.setNombre(scanner.nextLine());
+                        break;
+                    case 2:
+                        System.out.println("Ingrese la nueva descripción:");
+                        punto.setDescripcion(scanner.nextLine());
+                        break;
+                    case 3:
+                        System.out.println("Ingrese la nueva coordenada X:");
+                        punto.setCoordenadaX(scanner.nextDouble());
+                        break;
+                    case 4:
+                        System.out.println("Ingrese la nueva coordenada Y:");
+                        punto.setCoordenadaY(scanner.nextDouble());
+                        break;
+                    default:
+                        System.out.println("Opción no válida. No se realizarán cambios.");
+                        break;
+                }
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean borrarProyecto(String nombreProyecto) {
+        Proyecto proyectoABorrar = buscarProyectoPorNombre(nombreProyecto);
+
+        if (proyectoABorrar != null) {
+            listaProyectos.remove(proyectoABorrar);
+            return true;
+        } else {
+            System.out.println("No se encontró ningún proyecto con el nombre: " + nombreProyecto);
+            return false;
+        }
+    }
+
+    public String generarCodigoUnico() {
+        String uuid = UUID.randomUUID().toString();
+        String codigoUnico = "MI_APP_" + uuid;
+        return codigoUnico;
+    }
+
+    public boolean registrarEvidencia(String nombreDescriptivo, String descripcionDetallada, String proyectoAsociado, String fechaRegistro) {
+        Proyecto proyecto = buscarProyectoPorNombre(proyectoAsociado);
+
+        if (proyecto != null) {
+            Evidencia evidencia = new Evidencia(nombreDescriptivo, descripcionDetallada, proyectoAsociado, fechaRegistro, tipo);
+            listaEvidencias.add(evidencia);
+            return true;
+        } else {
+            System.out.println("El proyecto asociado no fue encontrado.");
+            return false;
+        }
+    }
+
+
+    private Proyecto buscarProyectoPorNombre(String nombreProyecto) {
+        for (Proyecto proyecto : listaProyectos) {
+            if (proyecto.getNombre().equals(nombreProyecto)) {
+                return proyecto;
+            }
+        }
+        return null;
+    }
+    public boolean registrarResena(String descripcionResena) {
+        Resena nuevaResena = new Resena("Esta es una reseña");
+        boolean resenaAgregada = agregarEvidencia(nuevaResena);
+        return resenaAgregada;
+    }
+    public boolean modificarDescripcionEvidencia(String nombreEvidenciaModificar, String nuevaDescripcionDetallada) {
+        Evidencia evidencia = buscarEvidenciaPorNombre(nombreEvidenciaModificar);
+
+        if (evidencia != null) {
+            evidencia.setDescripcionDetallada(nuevaDescripcionDetallada);
+            return true;
+        } else {
+            System.out.println("La evidencia con nombre '" + nombreEvidenciaModificar + "' no se encontró. Por favor, verifique el nombre.");
+            return false;
+        }
+    }
+
+    public boolean eliminarEvidencia(String nombreEvidenciaEliminar) {
+        Evidencia evidencia = buscarEvidenciaPorNombre(nombreEvidenciaEliminar);
+
+        if (evidencia != null) {
+            eliminarEvidencia(evidencia);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private List<Evidencia> obtenerListaDeEvidencias() {
+        // Aquí debes implementar la lógica para obtener la lista de evidencias
+        // Esto puede involucrar consultas a una base de datos, acceso a archivos, etc.
+        return this.listaEvidencias;  // Devolvemos la lista existente en el controlador
+    }
+
+
+    private void eliminarEvidencia(Evidencia evidencia) {
+        Iterator<Evidencia> iterator = listaEvidencias.iterator();
+        while (iterator.hasNext()) {
+            Evidencia actual = iterator.next();
+            if (actual.equals(evidencia)) {
+                iterator.remove();
+                break;
+            }
+        }
+    }
+
+    public boolean modificarEvidencia(String nombreEvidenciaModificar, String nuevoNombreDescriptivo) {
+        Evidencia evidencia = buscarEvidenciaPorNombre(nombreEvidenciaModificar);
+
+        if (evidencia != null) {
+            evidencia.setNombreDescriptivo(nuevoNombreDescriptivo);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean modificarProyectoEvidencia(String nombreEvidenciaModificar, String nuevoProyectoAsociado) {
+        Evidencia evidencia = buscarEvidenciaPorNombre(nombreEvidenciaModificar);
+
+        if (evidencia != null) {
+            evidencia.setProyectoAsociado(nuevoProyectoAsociado);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void asociarPuntoDeInteresAEvidencia(String codigoQR, String nombreEvidencia) {
+        PuntoDeInteres puntoDeInteres = obtenerPuntoDeInteresPorCodigoQR(codigoQR);
+
+        if (puntoDeInteres != null) {
+            Evidencia evidencia = obtenerEvidenciaPorNombre(nombreEvidencia);
+
+            if (evidencia != null) {
+                evidencia.agregarPuntoDeInteres(puntoDeInteres);
+                System.out.println("El punto de interés se asoció con éxito a la evidencia.");
+            } else {
+                System.out.println("No se encontró la evidencia con el nombre proporcionado.");
+            }
+        } else {
+            System.out.println("No se encontró el punto de interés con el código QR proporcionado.");
+        }
+    }
+
+    private PuntoDeInteres obtenerPuntoDeInteresPorCodigoQR(String codigoQR) {
+        for (PuntoDeInteres punto : puntosDeInteres) {
+            if (punto.getCodigoQR().equals(codigoQR)) {
+                return punto;
+            }
+        }
+        return null;
+    }
+
+    private Evidencia obtenerEvidenciaPorNombre(String nombreEvidencia) {
+        for (Evidencia evidencia : evidencias) {
+            if (evidencia.getNombre().equals(nombreEvidencia)) {
+                return evidencia;
+            }
+        }
+        return null;
+    }
+}

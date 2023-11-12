@@ -1,0 +1,70 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class Evidencia {
+
+    private List<PuntoDeInteres> listaPuntosDeInteres = new ArrayList<>();
+    private String proyectoAsociado;
+    private Date fechaRegistro;
+    private String nombreDescriptivo;
+    private String descripcionDetallada;
+    private String tipo;
+
+    public Evidencia(String nombreDescriptivo, String descripcionDetallada, String proyectoAsociado, String fechaRegistro, String tipo) {
+        this.nombreDescriptivo = nombreDescriptivo;
+        this.descripcionDetallada = descripcionDetallada;
+        this.proyectoAsociado = proyectoAsociado;
+        this.tipo = tipo;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            this.fechaRegistro = dateFormat.parse(fechaRegistro);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getNombreDescriptivo() {
+        return nombreDescriptivo;
+    }
+
+    public String getProyectoAsociado() {
+        return proyectoAsociado;
+    }
+
+    public Date getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public String getDescripcionDetallada() {
+        return descripcionDetallada;
+    }
+
+    public void setProyectoAsociado(String nuevoProyectoAsociado) {
+        this.proyectoAsociado = nuevoProyectoAsociado;
+    }
+
+    public void setDescripcionDetallada(String nuevaDescripcionDetallada) {
+        this.descripcionDetallada = nuevaDescripcionDetallada;
+    }
+
+    public void setNombreDescriptivo(String nuevoNombreDescriptivo) {
+        this.nombreDescriptivo = nuevoNombreDescriptivo;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void agregarPuntoDeInteres(PuntoDeInteres puntoDeInteres) {
+        listaPuntosDeInteres.add(puntoDeInteres);
+    }
+    public String getNombre() {
+        return "NombreDelObjeto";
+    }
+}
